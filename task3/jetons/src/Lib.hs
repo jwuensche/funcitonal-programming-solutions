@@ -25,9 +25,7 @@ payoff jetons = jetons' jetons 0 where
   jetons' (x:xs) n = jetons' xs (value x + n)
 
 count :: Jetons -> Int
-count jetons = count' jetons 0 where
-  count' [] n = n
-  count' (_:xs) n = count' xs (n+1)
+count jetons = length jetons
 
 buy :: Int -> Jetons
 buy currency = buy' currency [] where

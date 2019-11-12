@@ -9,22 +9,27 @@ module Lib
     ) where
 
 import Text.Printf
+import Data.Maybe
 
 data Cart = Empty | Bought Article Amount Cart
-
 data Article = Apple AppleKind | Eggs | Cheese CheeseKind | Tofu | Hummus | Milk Bio
 data Bio = NonBio | Bio
 data AppleKind = Boskop | CoxOrange | GrannySmith
 data CheeseKind = Gouda | Appenzeller
 data Amount = Piece Int | Gram Int | Litre Double
 
-cart_full :: Article -> Amount -> Cart -> Cart
-cart_full art am c = Bought art am c
-
-price :: Article -> Amount -> Double
-price article (Piece amount) = fromIntegral (article_price article) / 100 * fromIntegral amount
-price article (Gram amount) = (fromIntegral (article_price article) / 100) * (fromIntegral amount / 100)
-price article (Litre amount) = fromIntegral (article_price article) /100 * amount
+price :: Article -> Amount -> Maybe Double
+price article (Piece amount) = case article of
+  Apple _ -> Just $ fromIntegral (article_price article) / 100 * fromIntegral amount
+  Eggs -> Just $ fromIntegral (article_price article) / 100 * fromIntegral amount
+  _ -> Nothing
+price article (Gram amount) = case article of
+  Tofu -> Just $ (fromIntegral (article_price article) / 100) * (fromIntegral amount / 100)
+  Hummus -> Just $ (fromIntegral (article_price article) / 100) * (fromIntegral amount / 100)
+  _ -> Nothing
+price article (Litre amount) = case article of
+  Milk _ -> Just $ fromIntegral (article_price article) /100 * amount
+  _ -> Nothing
 
 article_price :: Article -> Int
 article_price article = case article of
@@ -59,7 +64,7 @@ instance Show Amount where
     Litre n -> printf "%f %s" n "l"
 
 receipt_article :: Article -> Amount -> String
-receipt_article article amount = printf "%s\t%s\t%f€" (show article) (show amount) (price article amount)
+receipt_article article amount = printf "%s\t%s\t%f€" (show article) (show amount) (fromJust (price article amount))
 
 receipt_header :: String
 receipt_header = printf "%s\t%s\t%s" "Article" "Amount" "Price"
@@ -67,15 +72,14 @@ receipt_header = printf "%s\t%s\t%s" "Article" "Amount" "Price"
 receipt_sum :: Cart -> Double
 receipt_sum  cart = help' cart 0 where
   help' foo n = case foo of
-    Bought article amount cart -> help' cart (n + price article amount)
+    Bought article amount cart -> help' cart (n + fromJust (price article amount))
     Empty -> n
 
 receipt_footer :: Double -> String
-receipt_footer sum = printf "Sum:\t\t\t%f€" sum
+receipt_footer sum = printf "Sum:\t\t%f€" sum
 
 receipt_delim :: String
 receipt_delim = "============================================"
-
 
 instance Show Cart where
   show cart = receipt_header ++ "\n" ++ receipt_delim ++ receipt_articles cart ++ "\n" ++ receipt_delim ++ "\n" ++ receipt_footer (receipt_sum cart) ++ "\n"
@@ -86,13 +90,3 @@ receipt_articles cart = print' cart "" where
   print' cart text = case cart of
     Empty -> text
     Bought article amount cart -> print' cart (text ++ "\n" ++ (receipt_article article amount))
-
-
-
-
-
-
-
-
-
-  
