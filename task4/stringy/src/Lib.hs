@@ -3,13 +3,15 @@ module Lib
       splitAtMultiple,
     ) where
 
-splitAtFoo :: Int -> String -> [String]
-splitAtFoo num string = splitAt' num string [] where
-  splitAt' :: Int -> String -> String -> [String]
-  splitAt' num (head:string) split = splitAt' (num - 1) string (head:split)
-  splitAt' 0 string split = [reverse split, string]
+splitAtFoo :: Int -> String -> (String, String)
+splitAtFoo num word = splitAt' num word [] where
+  splitAt' :: Int -> String -> String -> (String, String)
+  splitAt' 0 remain split = (reverse split, remain)
+  splitAt' cur_num (letter:cur_word) split
+    | num >= 0 = splitAt' (cur_num - 1) cur_word (letter:split)
+    | otherwise = ("", cur_word)
 
 splitAtMultiple :: [Int] -> String -> [String]
-splitAtMultiple positions word = splitAtMultiple' positions word [] where
-  splitAtMultiple' (num:positions) word acc = splitAtMultiple' positions word (head (splitAtFoo num word):acc)
-  splitAtMultiple' [] _ acc = acc
+splitAtMultiple poss word = splitAtMultiple' poss word [] where
+  splitAtMultiple' (num:positions) cur_word acc = splitAtMultiple' (map (\curr -> curr - num ) positions) (snd (splitAtFoo num cur_word)) (fst (splitAtFoo num cur_word):acc)
+  splitAtMultiple' [] cur_word acc = reverse acc ++ [cur_word]

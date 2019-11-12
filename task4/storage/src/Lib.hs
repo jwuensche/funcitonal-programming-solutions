@@ -39,7 +39,9 @@ remove storage item amount =
 
 ingredients_available :: (Eq a, Eq b) => Product a b -> Storage a -> Bool
 ingredients_available prod storage = ingredients' (ingredients prod) where
-  ingredients' ((Article foo amount):ingred) = if (contains storage foo) >= amount then ingredients' ingred else False
+  ingredients' ((Article foo amount):ingred)
+    | (contains storage foo) >= amount = ingredients' ingred
+    | otherwise = False
   ingredients' [] = True
 
 remove_product :: (Eq a, Eq b) => Product a b -> Storage a -> Storage a
@@ -48,5 +50,7 @@ remove_product prod storage = remove_product' (ingredients prod) storage where
   remove_product' [] storing = storing
 
 produce :: (Eq a, Eq b) => [Product a b] -> Storage a -> Storage a
-produce (prod:prods) storage = if ingredients_available prod storage then produce prods (remove_product prod storage) else produce prods storage
+produce (prod:prods) storage
+  | ingredients_available prod storage = produce prods (remove_product prod storage)
+  | otherwise = produce prods storage
 produce [] storage = storage
