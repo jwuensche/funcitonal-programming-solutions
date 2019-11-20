@@ -8,4 +8,17 @@ e.g.
 
 ### Folgende Ausdrücke
 
+let f = undefined :: b -> c1 -> c
 
+Evaluated:
+(f .) :: (a -> b) -> a -> c1 -> c
+
+As we can see the function is only partially applied and requires the application of a singular function (with the signature (a -> b)) and an input of the value a (for the first function).
+ 
+As for the second term:
+let g = undefined :: a -> a1 -> b
+
+Evaluated:
+(. g) :: ((a1 -> b) -> c) -> a -> c
+
+Again the composition is only partially applied and needs the second function aswell as the input parameter.

@@ -37,16 +37,16 @@ instance Num Bool where
   (-) True False = True
   (-) False True = True
   (-) _ _ = False
- 
+
   (+) True _ = True
   (+) _ True = True
-  (+) _ _ = True
+  (+) _ _ = False
 
-  abs a = a
+  abs a = True
 
   negate = not
 
   signum a = a
 
-  fromInteger 1 = True
+  fromInteger 0 = True
   fromInteger _ = False

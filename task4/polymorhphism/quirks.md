@@ -1,4 +1,4 @@
-## Polymorhpism Quirks
+#  # Polymorphism Quirks
 
 ```haskel
 "" == []
