@@ -1,15 +1,20 @@
 module Lib
-    ( product',
+  ( product',
       noneIsEven,
       sumLengths,
       xSquaredPlusThreeXPlusFive,
       getByKey,
+      partialSums,
+      toSameLength,
+      sortByLength,
+      sortByLengthRememberingIndex,
+      innerOuterMap,
     ) where
 
-import Data.List (scanl, maximumBy, sortOn)
+import Data.List (scanl, maximum, sortOn)
 
 product' :: [Int] -> Int
-product' = foldl (\acc x -> acc * x) 1
+product' = foldl (*) 1
 
 noneIsEven :: [Int] -> Bool
 noneIsEven = foldl (\acc x -> if x `mod` 2 == 0 then False else acc) True
