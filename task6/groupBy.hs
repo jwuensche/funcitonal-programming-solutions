@@ -1,5 +1,7 @@
 module Main where
 
+import Data.Function (on)
+
 groupBy :: (a -> a -> Bool) -> [a] -> [[a]]
 groupBy _ [] = []
 groupBy f (h:list) = reverse $ foldl (\(prev:acc) x -> case () of _
@@ -8,7 +10,7 @@ groupBy f (h:list) = reverse $ foldl (\(prev:acc) x -> case () of _
                                                                ) [[h]] list
 
 groupby :: Eq b => (a -> b) -> [a] -> [(b, [a])]
-groupby f = ((map (\x -> (fst $ head x, map (\(_, y) -> y) x))) . (groupBy (\x y -> (fst x) == (fst y)) . map (\x -> (f x, x))))
+groupby f = ((map (\x -> (fst $ head x, map (\(_, y) -> y) x))) . (groupBy ((==) `on` fst) . map (\x -> (f x, x))))
 
 main :: IO()
 main = do
