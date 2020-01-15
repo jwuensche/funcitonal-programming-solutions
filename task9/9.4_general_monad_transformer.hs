@@ -2,10 +2,10 @@ module Main where
 
 import Control.Monad.Trans.Class
 
-newtype EitherTransformer m a =
-  EitherTransformer { runEitherTransformer :: m (Either String a) }
+newtype EitherTransformer a m b=
+  EitherTransformer { runEitherTransformer :: m (Either a b) }
 
-instance (Monad m) => Monad (EitherTransformer m) where
+instance (Monad m) => Monad (EitherTransformer a m) where
   -- Immplement typeclass functions.
   return dat = EitherTransformer (return $ Right dat)
   ---
@@ -14,7 +14,7 @@ instance (Monad m) => Monad (EitherTransformer m) where
     apply (Left err) = return $ Left err
   ---
 
-instance MonadTrans EitherTransformer where
+instance MonadTrans (EitherTransformer a) where
   -- Implement typeclass functions.
   lift monad = EitherTransformer $ monad >>= may where
     may dat = return $ Right dat
